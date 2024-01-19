@@ -12,11 +12,15 @@ import 'package:timeago/timeago.dart';
 ///
 /// Displays chat bubbles as a ListView and TextField to enter new chat.
 class ChatPage extends StatefulWidget {
-  const ChatPage({Key? key}) : super(key: key);
+  final String chatRoomId;
+
+  const ChatPage({Key? key, required this.chatRoomId}) : super(key: key);
 
   static Route<void> route() {
     return MaterialPageRoute(
-      builder: (context) => const ChatPage(),
+      builder: (context) => const ChatPage(
+        chatRoomId: '',
+      ),
     );
   }
 
@@ -34,6 +38,7 @@ class _ChatPageState extends State<ChatPage> {
     _messagesStream = supabase
         .from('messages')
         .stream(primaryKey: ['id'])
+        .eq('chat_room_id', widget.chatRoomId)
         .order('created_at')
         .map((maps) => maps
             .map((map) => Message.fromMap(map: map, myUserId: myUserId))
@@ -87,7 +92,9 @@ class _ChatPageState extends State<ChatPage> {
                           },
                         ),
                 ),
-                const _MessageBar(),
+                _MessageBar(
+                  chatRoomId: widget.chatRoomId,
+                ),
               ],
             );
           } else {
@@ -101,8 +108,11 @@ class _ChatPageState extends State<ChatPage> {
 
 /// Set of widget that contains TextField and Button to submit message
 class _MessageBar extends StatefulWidget {
+  final String chatRoomId;
+
   const _MessageBar({
     Key? key,
+    required this.chatRoomId,
   }) : super(key: key);
 
   @override
@@ -167,6 +177,8 @@ class _MessageBarState extends State<_MessageBar> {
     _textController.clear();
     try {
       await supabase.from('messages').insert({
+        'chat_room_id': widget.chatRoomId,
+        'sender_id': myUserId,
         'profile_id': myUserId,
         'content': text,
       });

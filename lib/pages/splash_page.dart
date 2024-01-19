@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_chat_app/pages/chat_page.dart';
+import 'package:my_chat_app/pages/chat_room_page.dart';
 import 'package:my_chat_app/pages/register_page.dart';
 import 'package:my_chat_app/utils/constants.dart';
 
@@ -28,7 +28,7 @@ class SplashPageState extends State<SplashPage> {
           .pushAndRemoveUntil(RegisterPage.route(), (route) => false);
     } else {
       Navigator.of(context)
-          .pushAndRemoveUntil(ChatPage.route(), (route) => false);
+          .pushAndRemoveUntil(ChatRoomPage.route(), (route) => false);
     }
   }
 
